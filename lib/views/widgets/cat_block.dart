@@ -36,7 +36,7 @@ class CatBlock extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
