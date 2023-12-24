@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             margin: const EdgeInsets.only(top: 15),
-            child: SearchWallpaper(),
+            child: SearchWallpaper(searchText: ""),
           ),
 
           //! wallpaper category section

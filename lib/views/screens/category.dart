@@ -24,7 +24,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   ValueNotifier<bool> isLast = ValueNotifier(false);
 
   getCatRelWall() async {
-    categoryResults = await ApiOperations.searchWallpapers(widget.catName);
+    categoryResults = await ApiOperations.catwgoryWallpapers(widget.catName);
 
     setState(() {
       isLoading = false;
@@ -49,7 +49,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<void> goNextPage(int page) async {
-    List<PhotosModel> next = await ApiOperations.nextPage(page);
+    List<PhotosModel> next =
+        await ApiOperations.searchWallpapersNextPage(widget.catName, page);
     setState(() {
       categoryResults.addAll(next);
     });

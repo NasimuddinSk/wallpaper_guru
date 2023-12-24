@@ -9,6 +9,8 @@ import '../model/category_model.dart';
 class ApiOperations {
   static List<PhotosModel> trendingWallpapers = [];
   static List<PhotosModel> searchWallpaperList = [];
+  static List<PhotosModel> categoryWallpaper = [];
+  static List<PhotosModel> categoryWallpaperNext = [];
   static List<CategoryModel> cateogryModelList = [];
   static List<PhotosModel> nextPape = [];
 
@@ -58,14 +60,14 @@ class ApiOperations {
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);
       List photos = jsonData["photos"];
-      searchWallpaperList.clear();
+      categoryWallpaper.clear();
       for (var element in photos) {
-        searchWallpaperList.add(
+        categoryWallpaper.add(
           PhotosModel.fromApiToApp(element),
         );
       }
     });
-    return searchWallpaperList;
+    return categoryWallpaper;
   }
 
   static Future<List<PhotosModel>> searchWallpapersNextPage(
@@ -79,14 +81,14 @@ class ApiOperations {
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);
       List photos = jsonData["photos"];
-      searchWallpaperList.clear();
+      categoryWallpaperNext.clear();
       for (var element in photos) {
-        searchWallpaperList.add(
+        categoryWallpaperNext.add(
           PhotosModel.fromApiToApp(element),
         );
       }
     });
-    return searchWallpaperList;
+    return categoryWallpaperNext;
   }
 
   static List<CategoryModel> getCategoriesList() {
@@ -101,6 +103,7 @@ class ApiOperations {
       "Red Rose",
       "Animals",
       "Forest",
+      "Army",
     ];
     cateogryModelList.clear();
     cateogryName.forEach((catName) async {

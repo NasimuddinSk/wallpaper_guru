@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:wallpaper_guru/views/screens/search.dart';
 
-class SearchWallpaper extends StatelessWidget {
-  SearchWallpaper({super.key});
+class SearchWallpaper extends StatefulWidget {
+  String? searchText;
+  SearchWallpaper({super.key, required this.searchText});
 
-  final TextEditingController _searchController = TextEditingController();
+  @override
+  State<SearchWallpaper> createState() => _SearchWallpaperState();
+}
+
+class _SearchWallpaperState extends State<SearchWallpaper> {
+  TextEditingController? _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController(text: widget.searchText);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +35,12 @@ class SearchWallpaper extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          SearchScreen(query: _searchController.text),
+                      builder: (context) => SearchScreen(query: value),
                     ));
               },
               controller: _searchController,
               decoration: const InputDecoration(
+                errorMaxLines: 1,
                 hintText: "Search Wallpapers",
                 errorBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -45,7 +57,7 @@ class SearchWallpaper extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        SearchScreen(query: _searchController.text),
+                        SearchScreen(query: _searchController!.text),
                   ));
             },
             child: const Icon(Icons.search),

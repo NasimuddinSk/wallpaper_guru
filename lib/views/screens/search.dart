@@ -21,6 +21,11 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   List<PhotosModel> searchResults = [];
 
+  int page = 1;
+
+  final _controller = ScrollController();
+  ValueNotifier<bool> isLast = ValueNotifier(false);
+
   getSearchResults() async {
     searchResults = await ApiOperations.searchWallpapers(widget.query);
     setState(() {});
@@ -30,6 +35,25 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     getSearchResults();
+    _controller.addListener(() {
+      // you can try _controller.position.atEdge
+      if (_controller.position.pixels >=
+          _controller.position.maxScrollExtent - 100) {
+        //100 is item height
+        isLast.value = true;
+        goNextPage(page++);
+      } else {
+        isLast.value = false;
+      }
+    });
+  }
+
+  Future<void> goNextPage(int page) async {
+    List<PhotosModel> next =
+        await ApiOperations.searchWallpapersNextPage(widget.query, page);
+    setState(() {
+      searchResults.addAll(next);
+    });
   }
 
   @override
@@ -49,7 +73,7 @@ class _SearchScreenState extends State<SearchScreen> {
           Container(
             margin: const EdgeInsets.only(bottom: 15, top: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SearchWallpaper(),
+            child: SearchWallpaper(searchText: widget.query),
           ),
 
           //! Wallpaper Section
@@ -69,7 +93,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemBuilder: ((context, index) => Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Colors.amberAccent,
                       ),
                       height: 500,
                       width: 50,
