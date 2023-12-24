@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallpaper_guru/controller/api_opr.dart';
+import 'package:wallpaper_guru/views/screens/full_screen.dart';
 import 'package:wallpaper_guru/views/widgets/SarechBar.dart';
 import 'package:wallpaper_guru/views/widgets/cat_block.dart';
 
@@ -33,7 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   getTrendingWallpapers() async {
     trendingWallpaperList = await ApiOperations.getTrendingWallpapers();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -73,76 +76,94 @@ class _HomeScreenState extends State<HomeScreen> {
           word2: "Guru",
         ),
       ),
-      body: Column(
-        children: [
-          //! Wallpaper search section
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            margin: const EdgeInsets.only(top: 15),
-            child: SearchWallpaper(searchText: ""),
-          ),
-
-          //! wallpaper category section
-          Container(
-            margin: const EdgeInsets.only(
-              top: 20,
-              bottom: 5,
-            ),
-            child: SizedBox(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: catModList.length,
-                  itemBuilder: ((context, index) => CatBlock(
-                        categoryImgSrc: catModList[index].catImgUrl,
-                        categoryName: catModList[index].catName,
-                      ))),
-            ),
-          ),
-
-          //! wallpaper view section
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 5,
-              ),
-              child: GridView.builder(
-                controller: _controller,
-                cacheExtent: 5,
-                padding: const EdgeInsets.only(
-                  bottom: 10,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                //! Wallpaper search section
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  margin: const EdgeInsets.only(top: 15),
+                  child: SearchWallpaper(searchText: ""),
                 ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 13,
-                  mainAxisSpacing: 10,
-                  mainAxisExtent: 300,
+
+                //! wallpaper category section
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: 20,
+                    bottom: 5,
+                  ),
+                  child: SizedBox(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: catModList.length,
+                        itemBuilder: ((context, index) => CatBlock(
+                              categoryImgSrc: catModList[index].catImgUrl,
+                              categoryName: catModList[index].catName,
+                            ))),
+                  ),
                 ),
-                itemCount: trendingWallpaperList.length,
-                itemBuilder: ((context, index) => Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      // height: 700,
-                      // height: MediaQuery.of(context).size.height,
 
-                      width: 50,
-
-                      //! for image decorations
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          fit: BoxFit.cover,
-                          trendingWallpaperList[index].imgSrc,
-                        ),
+                //! wallpaper view section
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                    ),
+                    child: GridView.builder(
+                      controller: _controller,
+                      cacheExtent: 5,
+                      padding: const EdgeInsets.only(
+                        bottom: 10,
                       ),
-                    )),
-              ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 13,
+                        mainAxisSpacing: 10,
+                        mainAxisExtent: 300,
+                      ),
+                      itemCount: trendingWallpaperList.length,
+                      itemBuilder: ((context, index) => InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FullScreen(
+                                        imgUrl:
+                                            trendingWallpaperList[index].imgSrc)),
+                              );
+                            },
+                            child: Hero(
+                              tag: trendingWallpaperList[index].imgSrc,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                // height: 700,
+                                // height: MediaQuery.of(context).size.height,
+
+                                width: 50,
+
+                                //! for image decorations
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    fit: BoxFit.cover,
+                                    trendingWallpaperList[index].imgSrc,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -34,7 +34,7 @@ class ApiOperations {
 
   static Future<List<PhotosModel>> searchWallpapers(String query) async {
     await http.get(
-      Uri.parse("https://api.pexels.com/v1/search?query=$query&per_page=4&page=1"),
+      Uri.parse("https://api.pexels.com/v1/search?query=$query&per_page=80&page=1"),
       headers: {
         "Authorization": "563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
       },
@@ -53,7 +53,7 @@ class ApiOperations {
 
   static Future<List<PhotosModel>> catwgoryWallpapers(String query) async {
     await http.get(
-      Uri.parse("https://api.pexels.com/v1/search?query=$query&per_page=4&page=1"),
+      Uri.parse("https://api.pexels.com/v1/search?query=$query&per_page=80&page=1"),
       headers: {
         "Authorization": "563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
       },
@@ -74,7 +74,7 @@ class ApiOperations {
       String query, int page) async {
     await http.get(
       Uri.parse(
-          "https://api.pexels.com/v1/search?query=$query&per_page=4&page=$page"),
+          "https://api.pexels.com/v1/search?query=$query&per_page=80&page=$page"),
       headers: {
         "Authorization": "563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
       },
@@ -124,7 +124,8 @@ class ApiOperations {
     await http.get(
       Uri.parse("https://api.pexels.com/v1/curated?per_page=80&page=$page"),
       headers: {
-        "Authorization": "563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
+        "Authorization":
+            "8667563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
       },
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);

@@ -3,6 +3,7 @@ import 'package:wallpaper_guru/views/widgets/CustomAppBar.dart';
 
 import '../../controller/api_opr.dart';
 import '../../model/photos_model.dart';
+import 'full_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
   final String catName;
@@ -22,7 +23,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   final _controller = ScrollController();
   ValueNotifier<bool> isLast = ValueNotifier(false);
-
   getCatRelWall() async {
     categoryResults = await ApiOperations.catwgoryWallpapers(widget.catName);
 
@@ -126,7 +126,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         itemCount: categoryResults.length,
                         itemBuilder: ((context, index) => GridTile(
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FullScreen(
+                                            imgUrl: categoryResults[index].imgSrc)),
+                                  );
+                                },
                                 child: Hero(
                                   tag: categoryResults[index].imgSrc,
                                   child: Container(
@@ -148,7 +155,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               ),
                             ))),
                   ),
-                )
+                ),
               ],
             ),
     );
