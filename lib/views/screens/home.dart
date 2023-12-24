@@ -16,13 +16,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<PhotosModel> trendingWallpaperList = [];
-  late List<CategoryModel> CatModList;
+  late List<CategoryModel> catModList;
   bool isLoading = true;
 
-  GetCatDetails() async {
-    CatModList = await ApiOperations.getCategoriesList();
+  int page = 1;
+
+  final _controller = ScrollController();
+  ValueNotifier<bool> isLast = ValueNotifier(false);
+
+  getCatDetails() async {
+    catModList = ApiOperations.getCategoriesList();
     setState(() {
-      CatModList = CatModList;
+      catModList = catModList;
     });
   }
 
@@ -34,8 +39,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    GetCatDetails();
+    getCatDetails();
     getTrendingWallpapers();
+    _controller.addListener(() {
+      // you can try _controller.position.atEdge
+      if (_controller.position.pixels >=
+          _controller.position.maxScrollExtent - 100) {
+        //100 is item height
+        isLast.value = true;
+        goNextPage(page++);
+      } else {
+        isLast.value = false;
+      }
+    });
+  }
+
+  Future<void> goNextPage(int page) async {
+    List<PhotosModel> next = await ApiOperations.nextPage(page);
+    setState(() {
+      trendingWallpaperList.addAll(next);
+    });
   }
 
   @override
@@ -70,10 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
               width: MediaQuery.of(context).size.width,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: CatModList.length,
+                  itemCount: catModList.length,
                   itemBuilder: ((context, index) => CatBlock(
-                        categoryImgSrc: CatModList[index].catImgUrl,
-                        categoryName: CatModList[index].catName,
+                        categoryImgSrc: catModList[index].catImgUrl,
+                        categoryName: catModList[index].catName,
                       ))),
             ),
           ),
@@ -85,6 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 horizontal: 5,
               ),
               child: GridView.builder(
+                controller: _controller,
+                cacheExtent: 5,
                 padding: const EdgeInsets.only(
                   bottom: 10,
                 ),
@@ -98,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: ((context, index) => Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Colors.amberAccent,
                       ),
                       // height: 700,
                       // height: MediaQuery.of(context).size.height,
@@ -109,7 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                            fit: BoxFit.cover, trendingWallpaperList[index].imgSrc),
+                          fit: BoxFit.cover,
+                          trendingWallpaperList[index].imgSrc,
+                        ),
                       ),
                     )),
               ),

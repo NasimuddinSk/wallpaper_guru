@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:wallpaper_guru/views/widgets/CustomAppBar.dart';
 
 import '../../controller/api_opr.dart';
 import '../../model/photos_model.dart';
 
 class CategoryScreen extends StatefulWidget {
-  String catName;
-  String catImgUrl;
+  final String catName;
+  final String catImgUrl;
 
-  CategoryScreen({super.key, required this.catImgUrl, required this.catName});
+  const CategoryScreen({super.key, required this.catImgUrl, required this.catName});
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();
@@ -18,6 +17,12 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   late List<PhotosModel> categoryResults;
   bool isLoading = true;
+
+  int page = 1;
+
+  final _controller = ScrollController();
+  ValueNotifier<bool> isLast = ValueNotifier(false);
+
   getCatRelWall() async {
     categoryResults = await ApiOperations.searchWallpapers(widget.catName);
 
@@ -30,6 +35,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     getCatRelWall();
     super.initState();
+    _controller.addListener(() {
+      // you can try _controller.position.atEdge
+      if (_controller.position.pixels >=
+          _controller.position.maxScrollExtent - 100) {
+        //100 is item height
+        isLast.value = true;
+        goNextPage(page++);
+      } else {
+        isLast.value = false;
+      }
+    });
+  }
+
+  Future<void> goNextPage(int page) async {
+    List<PhotosModel> next = await ApiOperations.nextPage(page);
+    setState(() {
+      categoryResults.addAll(next);
+    });
   }
 
   @override
@@ -65,7 +88,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                     Positioned(
                       left: 120,
-                      top: 40,
+                      top: 60,
                       child: Column(
                         children: [
                           Text(
@@ -91,6 +114,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     height: double.infinity,
                     child: GridView.builder(
+                        controller: _controller,
                         physics: const BouncingScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -99,7 +123,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           crossAxisSpacing: 13,
                           mainAxisSpacing: 10,
                         ),
-                        itemCount: 4,
+                        itemCount: categoryResults.length,
                         itemBuilder: ((context, index) => GridTile(
                               child: InkWell(
                                 onTap: () {},
@@ -109,7 +133,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                     height: 800,
                                     width: 50,
                                     decoration: BoxDecoration(
-                                        color: Colors.amberAccent,
                                         borderRadius: BorderRadius.circular(20)),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
