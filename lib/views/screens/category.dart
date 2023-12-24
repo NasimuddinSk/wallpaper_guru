@@ -51,9 +51,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Future<void> goNextPage(int page) async {
     List<PhotosModel> next =
         await ApiOperations.searchWallpapersNextPage(widget.catName, page);
-    setState(() {
-      categoryResults.addAll(next);
-    });
+    setState(() {});
+    categoryResults.addAll(next);
   }
 
   @override
