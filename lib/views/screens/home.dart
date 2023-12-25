@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:wallpaper_guru/controller/api_opr.dart';
-import 'package:wallpaper_guru/views/screens/full_screen.dart';
+import 'package:wallpaper_guru/utils/set_wallpaper.dart';
 import 'package:wallpaper_guru/views/widgets/SarechBar.dart';
 import 'package:wallpaper_guru/views/widgets/cat_block.dart';
 
@@ -27,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   getCatDetails() async {
     catModList = ApiOperations.getCategoriesList();
+
     setState(() {
       catModList = catModList;
     });
@@ -127,16 +130,55 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisExtent: 300,
                       ),
                       itemCount: trendingWallpaperList.length,
-                      itemBuilder: ((context, index) => InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FullScreen(
-                                        imgUrl:
-                                            trendingWallpaperList[index].imgSrc)),
-                              );
-                            },
+                      itemBuilder: ((context, index) => FocusedMenuHolder(
+                            menuItems: [
+                              FocusedMenuItem(
+                                title: const Text(
+                                  "Home Screen",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                trailingIcon: const Icon(Icons.home_filled),
+                                onPressed: () {
+                                  setWallpaper(
+                                      trendingWallpaperList[index].imgSrc, 1);
+                                },
+                              ),
+                              FocusedMenuItem(
+                                backgroundColor: Colors.black,
+                                title: const Text(
+                                  "Lock Screen",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailingIcon: const Icon(
+                                  Icons.lock,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setWallpaper(
+                                      trendingWallpaperList[index].imgSrc, 2);
+                                },
+                              ),
+                              FocusedMenuItem(
+                                title: const Text(
+                                  "Both Screens",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                trailingIcon: const Icon(Icons.amp_stories_rounded),
+                                onPressed: () {
+                                  setWallpaper(
+                                      trendingWallpaperList[index].imgSrc, 3);
+                                },
+                              ),
+                            ],
+                            menuWidth: MediaQuery.of(context).size.width * .5,
+                            menuOffset: 12,
+                            duration: const Duration(seconds: 0),
+                            animateMenuItems: false,
+                            openWithTap: true,
+                            onPressed: () {},
                             child: Hero(
                               tag: trendingWallpaperList[index].imgSrc,
                               child: Container(

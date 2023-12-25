@@ -124,8 +124,7 @@ class ApiOperations {
     await http.get(
       Uri.parse("https://api.pexels.com/v1/curated?per_page=80&page=$page"),
       headers: {
-        "Authorization":
-            "8667563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
+        "Authorization": "563492ad6f917000010000011f24dc9322de481baf4a0764131d6952"
       },
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);

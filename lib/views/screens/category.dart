@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:wallpaper_guru/views/widgets/CustomAppBar.dart';
 
 import '../../controller/api_opr.dart';
 import '../../model/photos_model.dart';
-import 'full_screen.dart';
+import '../../utils/set_wallpaper.dart';
 
 class CategoryScreen extends StatefulWidget {
   final String catName;
@@ -124,31 +126,67 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           mainAxisSpacing: 10,
                         ),
                         itemCount: categoryResults.length,
-                        itemBuilder: ((context, index) => GridTile(
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FullScreen(
-                                            imgUrl: categoryResults[index].imgSrc)),
-                                  );
-                                },
-                                child: Hero(
-                                  tag: categoryResults[index].imgSrc,
-                                  child: Container(
-                                    height: 800,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20)),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Image.network(
-                                        height: 800,
-                                        width: 50,
-                                        fit: BoxFit.cover,
-                                        categoryResults[index].imgSrc,
-                                      ),
+                        itemBuilder: ((context, index) => FocusedMenuHolder(
+                              menuItems: [
+                                FocusedMenuItem(
+                                  title: const Text(
+                                    "Home Screen",
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  trailingIcon: const Icon(Icons.home_filled),
+                                  onPressed: () {
+                                    setWallpaper(categoryResults[index].imgSrc, 1);
+                                  },
+                                ),
+                                FocusedMenuItem(
+                                  backgroundColor: Colors.black,
+                                  title: const Text(
+                                    "Lock Screen",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  trailingIcon: const Icon(
+                                    Icons.lock,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    setWallpaper(categoryResults[index].imgSrc, 2);
+                                  },
+                                ),
+                                FocusedMenuItem(
+                                  title: const Text(
+                                    "Both Screens",
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  trailingIcon:
+                                      const Icon(Icons.amp_stories_rounded),
+                                  onPressed: () {
+                                    setWallpaper(categoryResults[index].imgSrc, 3);
+                                  },
+                                ),
+                              ],
+                              menuWidth: MediaQuery.of(context).size.width * .5,
+                              menuOffset: 12,
+                              duration: const Duration(seconds: 0),
+                              animateMenuItems: false,
+                              openWithTap: true,
+                              onPressed: () {},
+                              child: Hero(
+                                tag: categoryResults[index].imgSrc,
+                                child: Container(
+                                  height: 800,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(
+                                      height: 800,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                      categoryResults[index].imgSrc,
                                     ),
                                   ),
                                 ),

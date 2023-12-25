@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:wallpaper_guru/controller/api_opr.dart';
 import 'package:wallpaper_guru/model/photos_model.dart';
 
 import 'package:wallpaper_guru/views/widgets/SarechBar.dart';
 
+import '../../utils/set_wallpaper.dart';
 import '../widgets/CustomAppBar.dart';
-import 'full_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   final String query;
@@ -99,15 +101,52 @@ class _SearchScreenState extends State<SearchScreen> {
                         mainAxisExtent: 300,
                       ),
                       itemCount: searchResults.length,
-                      itemBuilder: ((context, index) => InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FullScreen(
-                                        imgUrl: searchResults[index].imgSrc)),
-                              );
-                            },
+                      itemBuilder: ((context, index) => FocusedMenuHolder(
+                            menuItems: [
+                              FocusedMenuItem(
+                                title: const Text(
+                                  "Home Screen",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                trailingIcon: const Icon(Icons.home_filled),
+                                onPressed: () {
+                                  setWallpaper(searchResults[index].imgSrc, 1);
+                                },
+                              ),
+                              FocusedMenuItem(
+                                backgroundColor: Colors.black,
+                                title: const Text(
+                                  "Lock Screen",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailingIcon: const Icon(
+                                  Icons.lock,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setWallpaper(searchResults[index].imgSrc, 2);
+                                },
+                              ),
+                              FocusedMenuItem(
+                                title: const Text(
+                                  "Both Screens",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                trailingIcon: const Icon(Icons.amp_stories_rounded),
+                                onPressed: () {
+                                  setWallpaper(searchResults[index].imgSrc, 3);
+                                },
+                              ),
+                            ],
+                            menuWidth: MediaQuery.of(context).size.width * .5,
+                            menuOffset: 12,
+                            duration: const Duration(seconds: 0),
+                            animateMenuItems: false,
+                            openWithTap: true,
+                            onPressed: () {},
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
